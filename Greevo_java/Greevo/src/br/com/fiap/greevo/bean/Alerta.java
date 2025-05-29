@@ -1,7 +1,7 @@
 package br.com.fiap.greevo.bean;
 
 public class Alerta {
-    private String tipo; // "Enchente", "Ciclone", etc.
+    private String tipo; // "Enchente", "Ciclone"...
     private Localizacao zonaRisco;
     private double raioKm;
 

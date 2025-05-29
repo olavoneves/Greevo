@@ -76,10 +76,18 @@ public class Abrigo {
     }
 
     public boolean inRaio(Localizacao locUsuario, double raioKm) {
+        if (locUsuario == null || raioKm == 0) {
+            return false;
+        }
+
         return this.localizacao.calcularDistancia(locUsuario) <= raioKm;
     }
 
     public boolean adicionarPessoas(int quantPessoas) {
+        if (quantPessoas <= 0) {
+            return false;
+        }
+
         if (this.lotacaoAtual + quantPessoas <= this.capacidadeMaxima) {
             this.lotacaoAtual += quantPessoas;
             return true;

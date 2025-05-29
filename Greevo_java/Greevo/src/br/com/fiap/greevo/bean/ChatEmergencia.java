@@ -10,7 +10,6 @@ public class ChatEmergencia implements Chatbot{
         mensagem = mensagem.toLowerCase();
         if (mensagem.matches(".*(abrigo|refúgio|abrigar|albergue|abrigos).*")) {
             return """
-               🆘 ABRIGOS PRÓXIMOS:
                1. Digite BUSCAR seguido de sua localização.
                   Ex: BUSCAR Teresópolis, RJ
                2. Para abrigos acessíveis, adicione ACESSIVEL.
@@ -18,14 +17,12 @@ public class ChatEmergencia implements Chatbot{
                """;
         } else if (mensagem.matches(".*(perigo|risco|emergência|alerta|chuv|enchent|deslizamento).*")) {
             return """
-               ⚠️ EMERGÊNCIA:
                - Entre em contato com a Defesa Civil local.
                - Siga para áreas elevadas imediatamente.
                - Use o comando BUSCAR para abrigos próximos.
                """;
         } else if (mensagem.matches(".*(ajuda|socorro|help|comandos|opções).*")) {
             return """
-               ℹ️ COMANDOS DISPONÍVEIS:
                - BUSCAR [localização]: Encontra abrigos
                - ALERTA: Verifica riscos na sua área
                - SAIR: Encerra o chat

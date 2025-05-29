@@ -1,5 +1,7 @@
 package br.com.fiap.greevo.bean;
 
+import javax.swing.*;
+
 public class Localizacao {
     private Long id;
     private String nome;
@@ -63,7 +65,7 @@ public class Localizacao {
                 break;
 
             default:
-                throw new IllegalArgumentException("Local não cadastrado: " + nome);
+                JOptionPane.showMessageDialog(null, String.format("Local não cadastrado: " + nome), "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -107,6 +109,9 @@ public class Localizacao {
     }
 
     public double calcularDistancia(Localizacao loc) {
+        if (loc == null) {
+            return 0;
+        }
         return Math.sqrt(Math.pow(loc.latitude - this.latitude, 2) + Math.pow(loc.longitude - this.longitude, 2));
     }
 }

@@ -48,6 +48,10 @@ public class Administrador {
     }
 
     public boolean autenticar(String inputLogin, String inputSenha) {
+        if (inputLogin == null || inputSenha == null) {
+            return false;
+        }
+
         return this.login.equals(inputLogin) && this.senha.equals(inputSenha);
     }
 }
