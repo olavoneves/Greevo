@@ -44,6 +44,9 @@ public class Usuario {
     }
 
     public boolean inRisco(Alerta alerta) {
+        if (alerta == null) {
+            return false;
+        }
         return alerta.getZonaRisco().calcularDistancia(this.localizacao) <= alerta.getRaioKm();
     }
 }

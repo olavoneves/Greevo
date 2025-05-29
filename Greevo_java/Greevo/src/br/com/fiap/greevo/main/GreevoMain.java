@@ -42,16 +42,23 @@ public class GreevoMain {
                         if (adminAtual != null) {
                             boolean cadastrando = true;
                             while (cadastrando) {
+
                                 String nomeAbrigo;
-                                String localAbrigo;
-                                int capacidade;
                                 do {
                                     nomeAbrigo = JOptionPane.showInputDialog("--- Cadastro de Abrigo --- \nNome do Abrigo (ex: Igreja): ");
-                                    localAbrigo = JOptionPane.showInputDialog("--- Cadastro de Abrigo --- \nLocal (ex: 'Teresópolis, RJ'): ");
-                                    capacidade = Integer.parseInt(JOptionPane.showInputDialog("--- Cadastro de Abrigo --- \nCapacidade Máxima:"));
-                                } while (nomeAbrigo.isEmpty() || localAbrigo.isEmpty() || capacidade == 0);
-                                int possuiAcessibilidade = JOptionPane.showConfirmDialog(null, "--- Cadastro de Abrigo --- \nAcessível ?", "CONFIRMAÇÃO", JOptionPane.YES_NO_OPTION);
+                                } while (nomeAbrigo.isEmpty());
 
+                                String localAbrigo;
+                                do {
+                                    localAbrigo = JOptionPane.showInputDialog("--- Cadastro de Abrigo --- \nLocal (ex: 'Teresópolis, RJ'): ");
+                                } while (localAbrigo.isEmpty());
+
+                                int capacidade;
+                                do {
+                                    capacidade = Integer.parseInt(JOptionPane.showInputDialog("--- Cadastro de Abrigo --- \nCapacidade Máxima:"));
+                                } while (capacidade == 0);
+                                int possuiAcessibilidade = JOptionPane.showConfirmDialog(null, "--- Cadastro de Abrigo --- \nAcessível ?", "CONFIRMAÇÃO", JOptionPane.YES_NO_OPTION);
+                                int verificaEmergencial = JOptionPane.showConfirmDialog(null, "Abrigo emergencial (com equipe médica e kit SOS)?", "TIPO DE ABRIGO", JOptionPane.YES_NO_OPTION);
                                 boolean acessivel;
                                 if (possuiAcessibilidade == JOptionPane.YES_OPTION) {
                                     acessivel = true;
@@ -59,12 +66,24 @@ public class GreevoMain {
                                     acessivel = false;
                                 }
 
-                                try {
-                                    Localizacao locAbrigo = new Localizacao(localAbrigo);
-                                    Abrigo newAbrigo = adminAtual.cadastrarAbrigo(nomeAbrigo, locAbrigo, capacidade, acessivel);
-                                    JOptionPane.showMessageDialog(null, String.format("--- Abrigo cadastrado com sucesso! --- \n\n Nome: " + newAbrigo.getNome() + "\n Localidade: " + newAbrigo.getLocalizacao().getNome() + "\n Capacidade Máxima: " + newAbrigo.getCapacidadeMaxima() + "\n Possui Acessibilidade: " + newAbrigo.isAcessivel()), "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
-                                } catch (IllegalArgumentException e) {
-                                    JOptionPane.showMessageDialog(null, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+                                Localizacao locAbrigo = new Localizacao(localAbrigo);
+                                Abrigo abrigo;
+                                AbrigoEmergencial abrigoEmergencial;
+                                boolean temEquipeMedica;
+                                boolean kitMedico;
+                                String responsavel;
+                                if (verificaEmergencial == JOptionPane.YES_OPTION) {
+                                    temEquipeMedica = JOptionPane.showConfirmDialog(null, "Possui equipe médica?", "CONFERE", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                                    kitMedico = JOptionPane.showConfirmDialog(null, "Possui kit de primeiros socorros?", "CONFERE", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                                    responsavel = JOptionPane.showInputDialog("Responsável Emergencial: ");
+
+                                    abrigoEmergencial = new AbrigoEmergencial(nomeAbrigo, locAbrigo, capacidade, acessivel, temEquipeMedica, kitMedico, responsavel);
+                                    adminAtual.cadastrarAbrigo(abrigoEmergencial);
+                                    JOptionPane.showMessageDialog(null, String.format("--- Abrigo Emergencial cadastrado com sucesso! --- \n\n Nome: " + abrigoEmergencial.getNome() + "\n Localidade: " + abrigoEmergencial.getLocalizacao().getNome() + "\n Capacidade Máxima: " + abrigoEmergencial.getCapacidadeMaxima() + "\n Possui Acessibilidade: " + abrigoEmergencial.isAcessivel() + "\n Possui Equipe Médica e Kit Socorros:  " + abrigoEmergencial.podeAtenderEmergencias() + "\n Responsável Emergencial: " + abrigoEmergencial.getResponsavel()));
+                                } else {
+                                    abrigo = new Abrigo(nomeAbrigo, locAbrigo, capacidade, acessivel);
+                                    adminAtual.cadastrarAbrigo(abrigo);
+                                    JOptionPane.showMessageDialog(null, String.format("--- Abrigo cadastrado com sucesso! --- \n\n Nome: " + abrigo.getNome() + "\n Localidade: " + abrigo.getLocalizacao().getNome() + "\n Capacidade Máxima: " + abrigo.getCapacidadeMaxima() + "\n Possui Acessibilidade: " + abrigo.isAcessivel()), "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
                                 }
 
                                 int continua = JOptionPane.showConfirmDialog(null, "Cadastrar outro abrigo ?", "CONFIRMAÇÃO", JOptionPane.YES_NO_OPTION);
@@ -167,10 +186,25 @@ public class GreevoMain {
                         do {
                             localAlerta = JOptionPane.showInputDialog("Informe sua localização (ex: 'Porto Príncipe'): ");
                         } while (localAlerta.isEmpty());
+                        verificaAcessibilidade = JOptionPane.showConfirmDialog(null, "Precisa de acessibilidade ?", "CONFIRMAÇÃO", JOptionPane.YES_NO_OPTION);
+
+                        if (verificaAcessibilidade == JOptionPane.YES_OPTION) {
+                            acessivel = true;
+                        } else {
+                            acessivel = false;
+                        }
+
                         try {
                             Localizacao locAlerta = new Localizacao(localAlerta);
+                            Usuario usuario =  new Usuario(locAlerta, acessivel);
+                            // Simula Alerta
                             Alerta alerta = new Alerta("Chuva Intensa", locAlerta, 5.0);
-                            JOptionPane.showMessageDialog(null, alerta.dispararAviso(), "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+
+                            if (usuario.inRisco(alerta)) {
+                                JOptionPane.showMessageDialog(null, alerta.dispararAviso(), "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Você não está em uma área de risco!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                            }
                         } catch (HeadlessException e) {
                             JOptionPane.showMessageDialog(null, e.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
                         }
@@ -186,18 +220,10 @@ public class GreevoMain {
                             if (mensagem.contains("sair")) {
                                 inChatbot = false;
                             } else if (mensagem.contains("perigo") || mensagem.contains("ajuda") || mensagem.contains("obrigado") || mensagem.contains("abrigo")) {
-                                if (mensagem.contains("perigo")) {
-                                    JOptionPane.showMessageDialog(null, chatEmergencia.responder(mensagem), "EMERGÊNCIA", JOptionPane.WARNING_MESSAGE);
-                                } else if (mensagem.contains("ajuda")) {
-                                    JOptionPane.showMessageDialog(null, chatEmergencia.responder(mensagem), "COMANDOS DISPONÍVEIS", JOptionPane.INFORMATION_MESSAGE);
-                                } else if (mensagem.contains("obrigado")) {
-                                    JOptionPane.showMessageDialog(null, chatEmergencia.responder(mensagem), "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
-                                } else {
-                                    JOptionPane.showMessageDialog(null, chatEmergencia.responder(mensagem), "ABRIGOS PRÓXIMOS", JOptionPane.WARNING_MESSAGE);
-                                }
+                                chatEmergencia.responder(mensagem);
                             } else if (mensagem.contains("idioma")) {
                                 // Objetivo final - Traduzir todo o fluxo para que o usuário possa comunicar-se na lingua escolhida
-                                int idioma = Integer.parseInt(JOptionPane.showInputDialog("Qual idioma você gostaria de se comunicar? \n 1. English \n 2. Spanish \n 3. Franch \n\n 0. Portuguese"));
+                                int idioma = Integer.parseInt(JOptionPane.showInputDialog("Qual idioma você gostaria de se comunicar? \n 1. English \n 2. Spanish \n 3. Franch \n 0. Portuguese"));
 
                                 switch (idioma) {
                                     case 1:
@@ -215,9 +241,10 @@ public class GreevoMain {
                                     default:
                                         break;
                                 }
-                                JOptionPane.showMessageDialog(null, chatTurista.responder(mensagem), "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
+                                chatTurista.responder(mensagem);
+                            } else {
+                                chatEmergencia.responder(mensagem);
                             }
-                            JOptionPane.showMessageDialog(null, chatEmergencia.responder(mensagem), "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
                         }
                         break;
                     case 0:

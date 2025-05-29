@@ -43,8 +43,8 @@ public class Administrador {
         this.senha = senha;
     }
 
-    public Abrigo cadastrarAbrigo(String nome, Localizacao local, int capacidade, boolean acessivel) {
-        return new Abrigo(nome, local, capacidade, acessivel);
+    public Abrigo cadastrarAbrigo(Abrigo abrigo) {
+        return new Abrigo(abrigo.getNome(), abrigo.getLocalizacao(), abrigo.getCapacidadeMaxima(), abrigo.isAcessivel());
     }
 
     public boolean autenticar(String inputLogin, String inputSenha) {
