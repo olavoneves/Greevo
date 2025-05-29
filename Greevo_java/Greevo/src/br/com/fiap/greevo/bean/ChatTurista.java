@@ -20,7 +20,6 @@ public class ChatTurista implements Chatbot{
         if (!idioma.matches("en|es|fr|pt")) {
             throw new IllegalArgumentException("Idioma inválido!");
         }
-        this.idioma = idioma;
         this.idioma = idioma.toLowerCase();
     }
 
