@@ -17,6 +17,10 @@ public class ChatTurista implements Chatbot{
     }
 
     public void setIdioma(String idioma) {
+        if (!idioma.matches("en|es|fr|pt")) {
+            throw new IllegalArgumentException("Idioma inválido!");
+        }
+        this.idioma = idioma;
         this.idioma = idioma.toLowerCase();
     }
 
@@ -49,9 +53,5 @@ public class ChatTurista implements Chatbot{
         } else {
             JOptionPane.showMessageDialog(null, " didn't understand. Type 'help' for options. / No entendí. Escribe 'ayuda' para opciones. / Je n'ai pas compris. Tapez aide pour les options.", "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-
-    public void mudarIdioma(String idioma) {
-        this.idioma = idioma.toLowerCase();
     }
 }
